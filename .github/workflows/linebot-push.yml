@@ -1,0 +1,25 @@
+name: Daily LINE Bot Push
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天 UTC 0點，台灣早上8點
+  workflow_dispatch:     # 手動觸發也可以
+
+jobs:
+  push-message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send message to LINE
+        run: |
+          curl -X POST https://api.line.me/v2/bot/message/push \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}" \
+          -d '{
+                "to": "${{ secrets.LINE_TO_ID }}",
+                "messages":[
+                    {
+                        "type":"text",
+                        "text":"早安 🌞！今天是 `'"$(date '+%Y/%m/%d')"'`，祝你有美好的一天！"
+                    }
+                ]
+              }'
